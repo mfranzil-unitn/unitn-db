@@ -1,0 +1,177 @@
+
+21	 'Bhutan'	28276028
+22	 'Bolivia'	81412876
+23	 'Bosnia and Herzegovina'	30159058
+24	 'Botswana'	21435399
+25	 'Brazil'	87552075
+26	 'Brunei'	11178399
+27	 'Bulgaria'	55331215
+28	 'Burkina Faso'	86640165
+29	 'Burundi'	92637379
+30	 'Cabo Verde'	56306233
+31	 'Cambodia'	54527258
+32	 'Cameroon'	55689410
+33	 'Canada'	19068523
+34	 'Central African Republic'	56713976
+35	 'Chad'	99235646
+36	 'Chile'	73828190
+37	 'China'	26237614
+38	 'Colombia'	98008976
+39	 'Comoros'	55929490
+40	 'Congo	80173667
+41	 'Congo	88407772
+42	 'Costa Rica'	56474575
+43	 'Côte d’Ivoire'	81286838
+44	 'Croatia'	9447661
+45	 'Cuba'	13532239
+46	 'Cyprus'	4484236
+47	 'Czech Republic'	8521856
+48	 'Denmark'	18348649
+49	 'Djibouti'	72135407
+50	 'Dominica'	29019410
+51	 'Dominican Republic'	95426484
+52	 'East Timor (Timor-Leste)'	20629514
+53	 'Ecuador'	56684517
+54	 'Egypt'	17424903
+55	 'El Salvador'	85077610
+56	 'Equatorial Guinea'	54034749
+57	 'Eritrea'	17970566
+58	 'Estonia'	87965564
+59	 'Ethiopia'	2979692
+60	 'Fiji'	16475100
+61	 'Finland'	37896102
+62	 'France'	4589637
+63	 'Gabon'	49080851
+64	 'The Gambia'	31996782
+65	 'Georgia'	70745271
+66	 'Germany'	25777307
+67	 'Ghana'	85659279
+68	 'Greece'	62102732
+69	 'Grenada'	79426631
+70	 'Guatemala'	80383586
+71	 'Guinea'	99576934
+72	 'Guinea-Bissau'	9947738
+73	 'Guyana'	9039004
+74	 'Haiti'	37826980
+75	 'Honduras'	40501273
+76	 'Hungary'	22704374
+77	 'Iceland'	42236373
+78	 'India'	5634627
+79	 'Indonesia'	2946141
+80	 'Iran'	54350188
+81	 'Iraq'	91300251
+82	 'Ireland'	28428630
+83	 'Israel'	19524447
+84	 'Jamaica'	69617794
+85	 'Japan'	54112894
+86	 'Jordan'	76915936
+87	 'Kazakhstan'	73782748
+88	 'Kenya'	49738942
+89	 'Kiribati'	75987591
+90	 'Korea	44643694
+91	 'Korea	28269559
+92	 'Kosovo'	88694320
+93	 'Kuwait'	62306939
+94	 'Kyrgyzstan'	47511903
+95	 'Laos'	66483588
+96	 'Latvia'	1519377
+97	 'Lebanon'	11073381
+98	 'Lesotho'	36081915
+99	 'Liberia'	69374823
+100	 'Libya'	76262968
+101	 'Liechtenstein'	71777718
+102	 'Lithuania'	96733900
+103	 'Luxembourg'	1304680
+104	 'Macedonia'	79515813
+105	 'Madagascar'	58272817
+106	 'Malawi'	19939431
+107	 'Malaysia'	47185654
+108	 'Maldives'	47027488
+109	 'Mali'	26704846
+110	 'Malta'	57254065
+111	 'Marshall Islands'	96236144
+112	 'Mauritania'	46395900
+113	 'Mauritius'	72981526
+114	 'Mexico'	93415236
+115	 'Micronesia	50394800
+116	 'Moldova'	90051523
+117	 'Monaco'	6180231
+118	 'Mongolia'	69925507
+119	 'Montenegro'	45396733
+120	 'Morocco'	17458266
+121	 'Mozambique'	25188343
+122	 'Myanmar (Burma)'	19744678
+123	 'Namibia'	85355160
+124	 'Nauru'	68072728
+125	 'Nepal'	15552698
+126	 'Netherlands'	65711144
+127	 'New Zealand'	54872286
+128	 'Nicaragua'	66071506
+129	 'Niger'	51134471
+130	 'Nigeria'	58467279
+131	 'Norway'	52634924
+132	 'Oman'	18839709
+133	 'Pakistan'	31532050
+134	 'Palau'	71153390
+135	 'Panama'	24062238
+136	 'Papua New Guinea'	76616735
+137	 'Paraguay'	20055338
+138	 'Peru'	39504066
+139	 'Philippines'	19908713
+140	 'Poland'	82539267
+141	 'Portugal'	85637418
+142	 'Qatar'	87251839
+143	 'Romania'	58527660
+144	 'Russia'	94191802
+145	 'Rwanda'	24293968
+146	 'Saint Kitts and Nevis'	4171619
+147	 'Saint Lucia'	11265906
+148	 'Saint Vincent and the Grenadines'	56758664
+149	 'Samoa'	26286976
+150	 'San Marino'	22828430
+151	 'Sao Tome and Principe'	80793405
+152	 'Saudi Arabia'	37331113
+153	 'Senegal'	21334536
+154	 'Serbia'	22477732
+155	 'Seychelles'	73751831
+156	 'Sierra Leone'	8764462
+157	 'Singapore'	72643334
+158	 'Slovakia'	28168238
+159	 'Slovenia'	25765628
+160	 'Solomon Islands'	31467316
+161	 'Somalia'	67602809
+162	 'South Africa'	42401168
+163	 'Spain'	26024768
+164	 'Sri Lanka'	21107118
+165	 'Sudan'	13632769
+166	 'Sudan	5949565
+167	 'Suriname'	77247342
+168	 'Swaziland'	29782402
+169	 'Sweden'	34600731
+170	 'Switzerland'	91187528
+171	 'Syria'	77856053
+172	 'Taiwan'	30295993
+173	 'Tajikistan'	14407584
+174	 'Tanzania'	18347951
+175	 'Thailand'	66571567
+176	 'Togo'	97329418
+177	 'Tonga'	90139469
+178	 'Trinidad and Tobago'	7624548
+179	 'Tunisia'	32962134
+180	 'Turkey'	99062637
+181	 'Turkmenistan'	65839214
+182	 'Tuvalu'	15116221
+183	 'Uganda'	92992647
+184	 'Ukraine'	30826152
+185	 'United Arab Emirates'	844797
+186	 'United Kingdom'	18039163
+187	 'United States'	93400982
+188	 'Uruguay'	87662052
+189	 'Uzbekistan'	12433211
+190	 'Vanuatu'	61942602
+191	 'Vatican City'	8512782
+192	 'Venezuela'	36932057
+193	 'Vietnam'	14019672
+194	 'Yemen'	95599558
+195	 'Zambia'	27824248
+196	 'Zimbabwe'	92213549
