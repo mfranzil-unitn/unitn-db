@@ -153,8 +153,8 @@ INSERT INTO works VALUES
 INSERT INTO missions VALUES
 (1, 'Alpha', 'Donald Trump', 'John McCain', 200, 2, FALSE),
 (2, 'Abereba', 'Silvio Berlusconi', 'Mario Monti', 1000, 1, TRUE),
-(3, ),
-(4, ),
+(3, 'Bravo', 'Luca Nicolli', 'Matteo Ambrosi', 299, 2, TRUE),
+(4, 'Charlie', 'Christian Spolaore', 'Filippo Spaggiari', 900, 4, TRUE),
 (5, ),
 (6, ),
 (7, ),
@@ -166,3 +166,16 @@ INSERT INTO missions VALUES
 (13, ),
 (14, ),
 (15, );
+
+INSERT INTO works_on VALUES
+(1, 1, 10),
+(2, 1, 5),
+(3, 1, 8),
+(4, 2, 4),
+(5, 3, 6),
+(6, 2, 10),
+(7, 2, 9),
+(8, 2, 1),
+(9, 4, 2),
+(10, 4, 8),
+(11, 4, 10);
