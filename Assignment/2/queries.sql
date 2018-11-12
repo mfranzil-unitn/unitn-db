@@ -1,14 +1,16 @@
 -- 1
 
 SELECT DISTINCT secret_agencies.name
-FROM countries, secret_agencies, operates
-WHERE countries.id = operates.country_id 
-AND countries.id = serves_country_id
+FROM secret_agencies, operates
+WHERE operates.country_id = serves_country_id
 AND secret_agencies.id = operates.agency_id;
 
 -- 2
 
-SELECT DISTINCT aa.name, cc1.name, cc2.name, cc3.name
+SELECT DISTINCT aa.name AS agency_name,
+                cc1.name AS first_state,
+                cc2.name AS second_state,
+                cc3.name AS third_state
 FROM (
     SELECT DISTINCT c1, c2, c3, MoreThanThree.agency_id
     FROM (
@@ -42,42 +44,29 @@ WHERE cc1.name < cc2.name AND cc2.name < cc3.name;
 
 -- 3
 
-SELECT secret_agencies.name
-FROM (
-    SELECT spies.country_id AS spy_country,
-           secret_agencies.id AS agency_id,
-           count(*) AS count
+SELECT agency_id, S.country_id, COUNT(*)
+FROM works W
+JOIN spies S on W.spy_id = S.id
+JOIN secret_agencies A ON A.id = W.agency_id
+WHERE (A.serves_country_id, S.country_id) IN (
+    SELECT *
     FROM borders
-    JOIN secret_agencies ON borders.country_id1 = secret_agencies.serves_country_id
-    JOIN works ON works.agency_id = secret_agencies.id
-    JOIN spies ON works.spy_id = spies.id
-    WHERE (secret_agencies.id,
-           borders.country_id1,
-           borders.country_id2) 
-           IN (
-        SELECT A.id, A.serves_country_id, S.country_id
-        FROM works W
-        JOIN spies S ON W.spy_id = S.id
-        JOIN secret_agencies A ON A.id = W.agency_id
-    )
-    GROUP BY secret_agencies.id, serves_country_id, spies.country_id
-    ORDER BY secret_agencies.id ASC) AS Candidates
-JOIN secret_agencies ON agency_id = secret_agencies.id
-WHERE Candidates.count >= ALL (
-    SELECT DISTINCT COUNT(*)
-    FROM spies
-    JOIN works ON spies.id = works.spy_id
-    JOIN secret_agencies ON secret_agencies.id = works.agency_id
-    WHERE secret_agencies.id = 7
-    GROUP BY spies.country_id
 )
-AND (spy_country, serves_country_id) IN (
-    SELECT * FROM borders
-);
+GROUP BY W.agency_id, S.country_id
+HAVING COUNT(*) > ALL (
+    SELECT COUNT(*)
+    FROM works W1
+    JOIN spies S1 ON W1.spy_id = S1.id
+    WHERE W1.agency_id = W.agency_id
+    AND S1.country_id != S.country_id
+    GROUP BY S1.country_id
+)
+ORDER BY agency_id ASC
 
 -- 4
 
-SELECT M.codename, AVG(W.grade)
+SELECT M.codename,
+       ROUND(AVG(W.grade),2)
 FROM missions M
 JOIN works_on W on W.mission_id = M.mission_id
 JOIN spies S on W.spy_id = S.id
@@ -89,4 +78,29 @@ AND 3 <= (
     GROUP BY mission_id
     HAVING mission_id = M.mission_id
 )
-GROUP BY M.mission_id 
+GROUP BY M.mission_id;
+
+
+-- 5 
+
+SELECT M.codename,
+       M.primary_target,
+       M.secondary_target
+FROM works_on W1 
+JOIN works_on W2 ON W1.mission_id = W2.mission_id
+JOIN spies S1 ON W1.spy_id = S1.id
+JOIN spies S2 ON W2.spy_id = S2.id
+JOIN missions M ON W1.mission_id = M.mission_id
+WHERE S1.name = '007' AND S2.name = '008';
+
+-- 6
+
+SELECT M1.codename
+FROM missions M1
+WHERE M1.duration = (
+    SELECT M.duration
+    FROM missions M
+    GROUP BY M.duration
+    ORDER BY M.duration DESC
+    LIMIT 1 OFFSET 1
+)
