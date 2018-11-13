@@ -104,3 +104,59 @@ WHERE M1.duration = (
     ORDER BY M.duration DESC
     LIMIT 1 OFFSET 1
 )
+
+-- 7
+
+SELECT Tab.mission_id, M.codename
+FROM (
+    SELECT L.mission_id as mission_id
+    FROM legs L
+    GROUP BY L.mission_id
+    HAVING COUNT(*) > 1 
+    AND COUNT(*) = COUNT(DISTINCT L.country_id)
+) AS Tab
+INNER JOIN missions M on Tab.mission_id = M.mission_id
+
+
+-- 8
+
+SELECT M.codename,
+       COALESCE(
+           ROUND(
+               cia_count::NUMERIC / spy_count::NUMERIC,
+               2
+            ), 0.00
+        ) AS percentage
+FROM (
+    SELECT M.mission_id AS mission_id,
+           COUNT(*) AS spy_count
+    FROM missions M
+    JOIN works_on WO on M.mission_id = WO.mission_id
+    JOIN works W ON WO.spy_id = W.spy_id
+    JOIN secret_agencies A on W.agency_id = A.id
+    GROUP BY M.mission_id
+) AS All_Spies
+FULL OUTER JOIN (
+    SELECT M.mission_id AS mission_id,
+           COUNT(*) AS cia_count
+    FROM missions M
+    JOIN works_on WO on M.mission_id = WO.mission_id
+    JOIN works W ON WO.spy_id = W.spy_id
+    JOIN secret_agencies A on W.agency_id = A.id
+    WHERE A.name = 'CIA'
+    GROUP BY M.mission_id
+) AS CIA_Spies ON All_Spies.mission_id = CIA_Spies.mission_id
+INNER JOIN missions M on All_Spies.mission_id = M.mission_id;
+
+-- 9
+SELECT DISTINCT C.name
+FROM missions M
+JOIN works_on WO ON M.mission_id = WO.mission_id
+JOIN spies S on S.id = WO.spy_id
+JOIN nicknames N on S.id = N.spy_id
+JOIN legs L on L.mission_id = M.mission_id
+JOIN countries C on L.country_id = C.id
+WHERE M.completed = FALSE AND N.nickname = 'Mr. Big'
+
+-- 10
+
