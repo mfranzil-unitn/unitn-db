@@ -14,7 +14,10 @@ SELECT DISTINCT aa.name AS agency_name,
 FROM (
     SELECT DISTINCT c1, c2, c3, MoreThanThree.agency_id
     FROM (
-        SELECT DISTINCT B1.country_id1 AS c1, B2.country_id1 AS c2, B3.country_id1 AS c3
+        SELECT DISTINCT 
+            B1.country_id1 AS c1,
+            B2.country_id1 AS c2,
+            B3.country_id1 AS c3
         FROM borders B1 
         JOIN borders B2 ON B1.country_id1 = B2.country_id2 
         JOIN borders B3 ON B2.country_id1 = B3.country_id2 
@@ -44,7 +47,7 @@ WHERE cc1.name < cc2.name AND cc2.name < cc3.name;
 
 -- 3
 
-SELECT agency_id, S.country_id, COUNT(*)
+SELECT A.name
 FROM works W
 JOIN spies S on W.spy_id = S.id
 JOIN secret_agencies A ON A.id = W.agency_id
@@ -52,7 +55,7 @@ WHERE (A.serves_country_id, S.country_id) IN (
     SELECT *
     FROM borders
 )
-GROUP BY W.agency_id, S.country_id
+GROUP BY W.agency_id, S.country_id, A.name
 HAVING COUNT(*) > ALL (
     SELECT COUNT(*)
     FROM works W1
@@ -61,7 +64,7 @@ HAVING COUNT(*) > ALL (
     AND S1.country_id != S.country_id
     GROUP BY S1.country_id
 )
-ORDER BY agency_id ASC
+ORDER BY agency_id ASC;
 
 -- 4
 
@@ -79,7 +82,6 @@ AND 3 <= (
     HAVING mission_id = M.mission_id
 )
 GROUP BY M.mission_id;
-
 
 -- 5 
 
@@ -103,7 +105,7 @@ WHERE M1.duration = (
     GROUP BY M.duration
     ORDER BY M.duration DESC
     LIMIT 1 OFFSET 1
-)
+);
 
 -- 7
 
@@ -112,11 +114,10 @@ FROM (
     SELECT L.mission_id as mission_id
     FROM legs L
     GROUP BY L.mission_id
-    HAVING COUNT(*) > 1 
+    HAVING COUNT(*) >= 1 
     AND COUNT(*) = COUNT(DISTINCT L.country_id)
 ) AS Tab
-INNER JOIN missions M on Tab.mission_id = M.mission_id
-
+INNER JOIN missions M on Tab.mission_id = M.mission_id;
 
 -- 8
 
@@ -149,6 +150,7 @@ FULL OUTER JOIN (
 INNER JOIN missions M on All_Spies.mission_id = M.mission_id;
 
 -- 9
+
 SELECT DISTINCT C.name
 FROM missions M
 JOIN works_on WO ON M.mission_id = WO.mission_id
@@ -156,7 +158,11 @@ JOIN spies S on S.id = WO.spy_id
 JOIN nicknames N on S.id = N.spy_id
 JOIN legs L on L.mission_id = M.mission_id
 JOIN countries C on L.country_id = C.id
-WHERE M.completed = FALSE AND N.nickname = 'Mr. Big'
+WHERE M.completed = FALSE AND N.nickname = 'Mr. Big';
 
 -- 10
 
+SELECT C.name, COUNT(DISTINCT L.mission_id)
+FROM countries C 
+JOIN legs L ON C.id = L.country_id 
+GROUP BY C.id;

@@ -154,7 +154,9 @@ INSERT INTO works VALUES
 (27, 9),
 (28, 1),
 (29, 9),
-(30, 9);
+(30, 9),
+(51, 1),
+(52, 1);
 
 INSERT INTO missions VALUES
 (1, 'Alpha', 'Donald Trump', 'John McCain', 200, 2, FALSE),
