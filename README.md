@@ -20,11 +20,11 @@ This repo contains material about the following course:
 
 You can find the following material in the repo:
 
-* appunti.md - Notes taken during class, written in Github-Flavored Markdown with LateX support.
-* appunti.html - Not-so-often updated HTML version of said notes.
-* markdown.css - File used to style the appunti.md file.
-* Codici/ - Code used in class.
-* Assignment/ - Assignment given by the teacher, with solutions.
+* `appunti.md` - Notes taken during class, written in GitHub-Flavored Markdown with LaTeX support.
+* `appunti.html` - Not-so-often updated HTML version of said notes.
+* `markdown.css` - File used to style the `appunti.md` file.
+* `Codici/` - Code used in class.
+* `Assignment/` - Assignment given by the teacher, with solutions.
 
 ## Authors
 
