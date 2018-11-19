@@ -6,20 +6,23 @@ INSERT INTO countries values
 (4, 'Algeria', 2261924),
 (5, 'Andorra', 52009258),
 (6, 'Angola', 43258254),
-(7,  'Antigua and Barbuda', 19860412),
-(8,  'Argentina', 56219054),
-(9,  'Armenia', 32030993),
-(10,  'Australia', 26646738),
-(11,  'Austria', 50995159),
-(12,  'Azerbaijan', 58716409),
-(13,  'The Bahamas', 85454872),
-(14,  'Bahrain', 3183121),
-(15,  'Bangladesh', 31238500),
-(16,  'Barbados', 58579251),
-(17,  'Belarus', 1947878),
-(18,  'Belgium', 72931260),
-(19,  'Belize', 47363107),
-(20,  'Benin', 65385751);
+(7, 'Antigua and Barbuda', 19860412),
+(8, 'Argentina', 56219054),
+(9, 'Armenia', 32030993),
+(10, 'Australia', 26646738),
+(11, 'Austria', 50995159),
+(12, 'Azerbaijan', 58716409),
+(13, 'The Bahamas', 85454872),
+(14, 'Bahrain', 3183121),
+(15, 'Bangladesh', 31238500),
+(16, 'Barbados', 58579251),
+(17, 'Belarus', 1947878),
+(18, 'Belgium', 72931260),
+(19, 'Belize', 47363107),
+(20, 'Benin', 65385751),
+(21, 'PaeseIncasinato', 234565323),
+(22, 'PaeseCattivo1', 2324182),
+(23, 'PaeseCattivo2', 68223435);
 
 INSERT INTO secret_agencies VALUES
 (0, 'NEST Corp.', 0),
@@ -31,7 +34,8 @@ INSERT INTO secret_agencies VALUES
 (6, 'Povo Inc.', 3),
 (7, 'Poli', 4),
 (8, 'SOSI', 5),
-(9, 'CIA', 4);
+(9, 'CIA', 4),
+(10, 'AgenziaPaeseIncasinato', 21);
 
 INSERT INTO operates VALUES
 (0, 0),
@@ -70,7 +74,11 @@ INSERT INTO borders VALUES
 (4, 6),
 (6, 4),
 (5, 6),
-(6, 5);
+(6, 5),
+(21, 22),
+(22, 21),
+(21, 23),
+(23, 21);
 
 INSERT INTO spies VALUES 
 (1, 'Vernon Moyer', 5, true),
@@ -124,7 +132,14 @@ INSERT INTO spies VALUES
 (49, 'Sybil Juhruke', 15, false),
 (50, 'Oralia Albin', 17, false),
 (51, '007', 1, true),
-(52, '008', 1, false);
+(52, '008', 1, false),
+(53, 'Antonio Simon', 22, true),
+(54, 'Ettore Falde', 22, true),
+(55, 'Matteo Pettinà', 22, false),
+(56, 'Renato Lo Cigno', 23, true),
+(57, 'Roberto Sebastiani', 23, false),
+(58, 'Alberto Montresor', 23, true),
+(59, 'Povero Sfigato', 21, true);
 
 INSERT INTO works VALUES
 (1, 2),
@@ -156,24 +171,21 @@ INSERT INTO works VALUES
 (29, 9),
 (30, 9),
 (51, 1),
-(52, 1);
+(52, 1),
+(53, 10),
+(54, 10),
+(55, 10),
+(56, 10),
+(57, 10),
+(58, 10),
+(59, 10);
 
 INSERT INTO missions VALUES
 (1, 'Alpha', 'Donald Trump', 'John McCain', 200, 2, FALSE),
 (2, 'Abereba', 'Silvio Berlusconi', 'Mario Monti', 1000, 1, TRUE),
 (3, 'Bravo', 'Luca Nicolli', 'Matteo Ambrosi', 299, 2, TRUE),
 (4, 'Charlie', 'Christian Spolaore', 'Filippo Spaggiari', 900, 4, TRUE),
-(5, 'Daddy', 'Fausto Giunchiglia', 'Mattia Fumagalli', 900, 8, FALSE),
-(6, ),
-(7, ),
-(8, ),
-(9, ),
-(10, ),
-(11, ),
-(12, ),
-(13, ),
-(14, ),
-(15, );
+(5, 'Daddy', 'Fausto Giunchiglia', 'Mattia Fumagalli', 900, 8, FALSE);
 
 INSERT INTO works_on VALUES
 (1, 1, 10),
