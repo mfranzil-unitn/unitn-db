@@ -82,7 +82,18 @@
     ```
 - **Aggregation**:
   
-    TBD
+    ```SQL
+        CREATE TABLE Aggregation_Relation (
+            attiributes SERIAL,
+            first_key_in_aggregation SERIAL, 
+            second_key_in_aggregation SERIAL,
+            other_key SERIAL,
+            PRIMARY KEY (all_the_keys),
+            FOREIGN KEY (first_key_in_aggregation) REFERENCES (...),
+            FOREIGN KEY (second_key_in_aggregation) REFERENCES (...),
+            FOREIGN KEY (other_key) REFERENCES (...)
+        )
+    ```
 
 ## Relational Algebra
 
