@@ -4,3 +4,7 @@ Libri PDF/
 Materiale/
 Slide/
 Vecchio materiale/
+*.aux
+*.toc
+*.gz
+*.log
