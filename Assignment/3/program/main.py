@@ -13,13 +13,16 @@ import time
 import psycopg2
 
 
-class Counter:
-    def __init__(self):
-        self.start = -1
-        self.end = -1
+# class Counter:
+#     def __init__(self):
+#         self.start = -1
+#         self.end = -1
+#
+#     def start(self):
+#         pass
 
-    def start(self):
-        pass
+def timer():
+    return time.perf_counter() * (10 ** 9)
 
 
 connection = psycopg2.connect("dbname='db_016' user='db_016' host='sci-didattica.unitn.it' password='faustoemagro'")
@@ -27,17 +30,17 @@ connection = psycopg2.connect("dbname='db_016' user='db_016' host='sci-didattica
 cur = connection.cursor()
 
 # Statement 1
-start = time.perf_counter_ns()
+start = timer()
 
 cur.execute("DROP TABLE IF EXISTS Car;"
             "DROP TABLE IF EXISTS Person;")
 
 connection.commit()
-end = time.perf_counter_ns()
-print("Step 1 needs " + str(end - start) + "ns")
+end = timer()
+print("Step 1 needs " + str(end - start) + " ns")
 
 # Statement 2
-start = time.perf_counter_ns()
+start = timer()
 
 cur.execute("CREATE TABLE Person ("
             "id INTEGER PRIMARY KEY,"
@@ -46,17 +49,17 @@ cur.execute("CREATE TABLE Person ("
             "age INTEGER NOT NULL,"
             "height FLOAT NOT NULL);"
             "CREATE TABLE Car ("
-            "targa CHAR(50) PRIMARY KEY,"
+            "targa CHAR(25) PRIMARY KEY,"
             "brand CHAR(50) NOT NULL,"
             "color CHAR(30) NOT NULL,"
             "owner INTEGER REFERENCES Person(id));")
 
 connection.commit()
-end = time.perf_counter_ns()
-print("Step 2 needs " + str(end - start) + "ns")
+end = timer()
+print("Step 2 needs " + str(end - start) + " ns")
 
 # Statement 3
-start = time.perf_counter_ns()
+start = timer()
 people_insertion = []
 
 for i in range(0, 1000000):
@@ -72,23 +75,27 @@ for i in range(0, 1000000):
     )
 
     age = random.randrange(0, 101)
-    # people_insertion.append(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(i*0.001))
-    people_insertion.append(f"{i}\t{name}\t{address}\t{age}\t{i*0.001}")
+    people_insertion.append(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(i * 0.001))
+    # people_insertion.append(f"{i}\t{name}\t{address}\t{age}\t{i*0.001}")
 
-people_insertion.append("185000\t'Centottantacinque'\t'ViadeiSolteri97'\t1\t185")
+people_insertion.append("185000\tCentottantacinque\tViadeiSolteri97\t1\t185")
 
 data = StringIO()
 data.write("\n".join(people_insertion))
 data.seek(0)
 
+# with open("sample.txt", "w") as file:
+#   file.write(data.getvalue())
+
 cur.copy_from(data, "Person")
 
+data.close()
 connection.commit()
-end = time.perf_counter_ns()
-print("Step 3 needs " + str(end - start) + "ns")
+end = timer()
+print("Step 3 needs " + str(end - start) + " ns")
 
 # Statement 4
-start = time.perf_counter_ns()
+start = timer()
 
 car_insertion = []
 plate_dict = {}
@@ -113,9 +120,9 @@ for i in range(0, 1000000):
         random.choices(string.ascii_lowercase, k=7)
     )
 
-    # car_insertion.append(targa + "\t" + brand + "\t" + color + "\t" + str(i))
-    car_insertion.append(f"{targa}\t{brand}\t{color}\t{i}")
-    #print(f"{targa}\t{brand}\t{color}\t{i}")
+    car_insertion.append(targa + "\t" + brand + "\t" + color + "\t" + str(i))
+    # car_insertion.append(f"{targa}\t{brand}\t{color}\t{i}")
+    # print(f"{targa}\t{brand}\t{color}\t{i}")
 
 data = StringIO()
 data.write("\n".join(car_insertion))
@@ -124,12 +131,11 @@ data.seek(0)
 cur.copy_from(data, "Car")
 
 connection.commit()
-end = time.perf_counter_ns()
-print("Step 4 needs " + str(end - start) + "ns")
-
+end = timer()
+print("Step 4 needs " + str(end - start) + " ns")
 
 # Statement 5
-start = time.perf_counter_ns()
+start = timer()
 
 cur.execute("SELECT id FROM Person")
 data = cur.fetchall()
@@ -137,9 +143,75 @@ data = cur.fetchall()
 for item in data:
     print(item[0], file=sys.stderr)
 
-end = time.perf_counter_ns()
-print("Step 4 needs " + str(end - start) + "ns")
+connection.commit()
+end = timer()
+print("Step 5 needs " + str(end - start) + " ns")
 
+# Statement 6
+start = timer()
+
+cur.execute("UPDATE Person SET height = 200 WHERE height = 185")
+
+connection.commit()
+end = timer()
+print("Step 6 needs " + str(end - start) + " ns")
+
+# Statement 7
+start = timer()
+
+cur.execute("SELECT * FROM Person WHERE height = 200")
+data = cur.fetchall()
+
+for item in data:
+    print(str(item[0]) + " " + str(item[1]), file=sys.stderr)
+
+connection.commit()
+end = timer()
+print("Step 7 needs " + str(end - start) + " ns")
+
+# Statement 8
+start = timer()
+
+cur.execute("CREATE INDEX height_idx ON Person (height)")
+
+connection.commit()
+end = timer()
+print("Step 8 needs " + str(end - start) + " ns")
+
+# Statement 9
+start = timer()
+
+cur.execute("SELECT id FROM Person")
+data = cur.fetchall()
+
+for item in data:
+    print(item[0], file=sys.stderr)
+
+connection.commit()
+end = timer()
+print("Step 9 needs " + str(end - start) + " ns")
+
+# Statement 10
+start = timer()
+
+cur.execute("UPDATE Person SET height = 210 WHERE height = 200")
+
+connection.commit()
+end = timer()
+print("Step 10 needs " + str(end - start) + " ns")
+
+# Statement 11
+start = timer()
+
+cur.execute("SELECT * FROM Person WHERE height = 210")
+data = cur.fetchall()
+
+for item in data:
+    print(str(item[0]) + " " + str(item[1]), file=sys.stderr)
+
+connection.commit()
+end = timer()
+print("Step 11 needs " + str(end - start) + " ns")
 
 cur.close()
 connection.close()
