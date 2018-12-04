@@ -1,29 +1,28 @@
 #!/usr/bin/env python3
 import sys
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 import random
 import string
 import time
 
 import psycopg2
 
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
-# class Counter:
-#     def __init__(self):
-#         self.start = -1
-#         self.end = -1
-#
-#     def start(self):
-#         pass
+if sys.version_info >= (3, 7):
+    def timer():
+        return time.perf_counter_ns()
 
-def timer():
-    return time.perf_counter() * (10 ** 9)
+elif sys.version_info >= (3, 3):
+    def timer():
+        return time.perf_counter() * (10 ** 9)
 
+else:
+    def timer():
+        return time.clock() * (10 ** 9)
 
 connection = psycopg2.connect("dbname='db_016' user='db_016' host='sci-didattica.unitn.it' password='faustoemagro'")
 
@@ -78,6 +77,7 @@ for i in range(0, 1000000):
     people_insertion.append(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(i * 0.001))
     # people_insertion.append(f"{i}\t{name}\t{address}\t{age}\t{i*0.001}")
 
+random.shuffle(people_insertion)
 people_insertion.append("185000\tCentottantacinque\tViadeiSolteri97\t1\t185")
 
 data = StringIO()
@@ -123,6 +123,8 @@ for i in range(0, 1000000):
     car_insertion.append(targa + "\t" + brand + "\t" + color + "\t" + str(i))
     # car_insertion.append(f"{targa}\t{brand}\t{color}\t{i}")
     # print(f"{targa}\t{brand}\t{color}\t{i}")
+
+random.shuffle(car_insertion)
 
 data = StringIO()
 data.write("\n".join(car_insertion))
