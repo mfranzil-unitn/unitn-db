@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-import sys
-
 import random
 import string
+import sys
 import time
 
 import psycopg2
@@ -60,6 +59,7 @@ print("Step 2 needs " + str(end - start) + " ns")
 # Statement 3
 start = timer()
 people_insertion = []
+heights = {}
 
 for i in range(0, 1000000):
     if i == 185000:
@@ -74,7 +74,17 @@ for i in range(0, 1000000):
     )
 
     age = random.randrange(0, 101)
-    people_insertion.append(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(i * 0.001))
+
+    while True:
+        random.seed(i)
+        height = round(random.uniform(80, 210), 4)
+
+        if height not in heights and height != 185:
+            heights[str(height)] = True
+            break
+
+    people_insertion.append(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
+    print(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
     # people_insertion.append(f"{i}\t{name}\t{address}\t{age}\t{i*0.001}")
 
 random.shuffle(people_insertion)
@@ -102,13 +112,12 @@ plate_dict = {}
 
 for i in range(0, 1000000):
     while True:
+        random.seed(i)
         targa = "".join(
             random.choices(string.ascii_uppercase + string.digits, k=10)
         )
 
-        if targa in plate_dict:
-            continue
-        else:
+        if targa not in plate_dict:
             plate_dict[targa] = True
             break
 
@@ -122,7 +131,7 @@ for i in range(0, 1000000):
 
     car_insertion.append(targa + "\t" + brand + "\t" + color + "\t" + str(i))
     # car_insertion.append(f"{targa}\t{brand}\t{color}\t{i}")
-    # print(f"{targa}\t{brand}\t{color}\t{i}")
+    print(f"{targa}\t{brand}\t{color}\t{i}")
 
 random.shuffle(car_insertion)
 
@@ -147,6 +156,7 @@ for item in data:
 
 connection.commit()
 end = timer()
+sys.stderr.flush()
 print("Step 5 needs " + str(end - start) + " ns")
 
 # Statement 6
@@ -165,10 +175,11 @@ cur.execute("SELECT * FROM Person WHERE height = 200")
 data = cur.fetchall()
 
 for item in data:
-    print(str(item[0]) + " " + str(item[1]), file=sys.stderr)
+    print(str(item[0]) + "," + str(item[1]), file=sys.stderr)
 
 connection.commit()
 end = timer()
+sys.stderr.flush()
 print("Step 7 needs " + str(end - start) + " ns")
 
 # Statement 8
@@ -191,6 +202,7 @@ for item in data:
 
 connection.commit()
 end = timer()
+sys.stderr.flush()
 print("Step 9 needs " + str(end - start) + " ns")
 
 # Statement 10
@@ -209,10 +221,11 @@ cur.execute("SELECT * FROM Person WHERE height = 210")
 data = cur.fetchall()
 
 for item in data:
-    print(str(item[0]) + " " + str(item[1]), file=sys.stderr)
+    print(str(item[0]) + "," + str(item[1]), file=sys.stderr)
 
 connection.commit()
 end = timer()
+sys.stderr.flush()
 print("Step 11 needs " + str(end - start) + " ns")
 
 cur.close()
