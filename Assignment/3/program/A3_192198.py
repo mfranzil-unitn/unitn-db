@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import random
 import string
 import sys
@@ -59,44 +60,50 @@ print("Step 2 needs " + str(end - start) + " ns")
 # Statement 3
 start = timer()
 people_insertion = []
-heights = {}
 
-for i in range(0, 1000000):
-    if i == 185000:
-        continue
+# Set per le chiavi e le altezze
+heights = set()
+keys_list = random.sample(range(0, 2147483647), 1000000)
 
+for i in range(0, 999999):
+    key = keys_list[i]
+
+    # Genero il nome completamente a caso
     name = "".join(
         random.choices(string.ascii_lowercase, k=12)
     )
 
+    # Idem per l'indirizzo
     address = "".join(
         random.choices(string.ascii_lowercase, k=10)
     )
 
-    age = random.randrange(0, 101)
+    # E pure per l'altezza
+    age = random.randrange(18, 100)
 
+    # Genero casualmente l'altezza tenendo traccia di quelle già create
     while True:
-        random.seed(i)
         height = round(random.uniform(80, 210), 4)
 
         if height not in heights and height != 185:
-            heights[str(height)] = True
+            heights.add(height)
             break
 
-    people_insertion.append(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
-    print(str(i) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
+    people_insertion.append(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
+    # print(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
     # people_insertion.append(f"{i}\t{name}\t{address}\t{age}\t{i*0.001}")
 
-random.shuffle(people_insertion)
-people_insertion.append("185000\tCentottantacinque\tViadeiSolteri97\t1\t185")
+# Generazione della chiave per la tupla con altezza 185
+key185 = keys_list[999999]
+
+# Inserisco la tupla con valore 185 in altezza
+people_insertion.append(str(key185) + "\tCentottantacinque\tViadeiSolteri97\t1\t185")
 
 data = StringIO()
 data.write("\n".join(people_insertion))
 data.seek(0)
 
-# with open("sample.txt", "w") as file:
-#   file.write(data.getvalue())
-
+# Inserisco i dati
 cur.copy_from(data, "Person")
 
 data.close()
@@ -108,32 +115,31 @@ print("Step 3 needs " + str(end - start) + " ns")
 start = timer()
 
 car_insertion = []
-plate_dict = {}
+
+# Genero una lista di targhe (possibilmente finché non arrivo a 1 milione)
+plates = list(set("".join(random.choices(string.ascii_uppercase + string.digits, k=10)) for _ in range(0, 1000000)))
+while len(plates) != 1000000:
+    plates = list(set("".join(random.choices(string.ascii_uppercase + string.digits, k=10)) for _ in range(0, 1000000)))
+
+random.shuffle(keys_list)
 
 for i in range(0, 1000000):
-    while True:
-        random.seed(i)
-        targa = "".join(
-            random.choices(string.ascii_uppercase + string.digits, k=10)
-        )
-
-        if targa not in plate_dict:
-            plate_dict[targa] = True
-            break
+    targa = plates[i]
 
     brand = "".join(
-        random.choices(string.ascii_lowercase, k=10)
+        random.choices(string.ascii_lowercase, k=7)
     )
 
     color = "".join(
         random.choices(string.ascii_lowercase, k=7)
     )
 
-    car_insertion.append(targa + "\t" + brand + "\t" + color + "\t" + str(i))
-    # car_insertion.append(f"{targa}\t{brand}\t{color}\t{i}")
-    print(f"{targa}\t{brand}\t{color}\t{i}")
+    # Estraggo a caso un oggetto dalla lista delle chiavi
+    fk = keys_list[i]
 
-random.shuffle(car_insertion)
+    car_insertion.append(targa + "\t" + brand + "\t" + color + "\t" + str(fk))
+    # car_insertion.append(f"{targa}\t{brand}\t{color}\t{i}")
+    # print(f"{targa}\t{brand}\t{color}\t{fk}")
 
 data = StringIO()
 data.write("\n".join(car_insertion))
