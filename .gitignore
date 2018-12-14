@@ -1,11 +1,22 @@
+Assignment/3/program/stderr
+Assignment/3/program/stdout
+Assignment/3/program/output.txt
+Assignment/3/program/venv/
 Assignment/3/program/.idea/
 Esami/
 Esercizi e materiali del prof/
 Libri PDF/
 Materiale/
 Slide/
+vscode/
 Vecchio materiale/
 *.aux
 *.toc
 *.gz
 *.log
+Assignment/3/program/venv/lib64
+Assignment/3/program/venv/bin/python3.7
+Assignment/3/program/venv/bin/python3
+Assignment/3/program/venv/bin/python
+Assignment/3/program/stdout
+Assignment/3/program/stderr
