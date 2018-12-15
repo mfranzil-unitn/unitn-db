@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 
 import random
 import string
@@ -8,9 +10,9 @@ import time
 import psycopg2
 
 try:
-    from StringIO import StringIO
+    from StringIO import StringIO  # Python 2.7
 except ImportError:
-    from io import StringIO
+    from io import StringIO  # Python 3.6
 
 if sys.version_info >= (3, 7):
     def timer():
@@ -23,6 +25,8 @@ elif sys.version_info >= (3, 3):
 else:
     def timer():
         return time.clock() * (10 ** 9)
+
+TUPLES = 1000000
 
 connection = psycopg2.connect("dbname='db_016' user='db_016' host='sci-didattica.unitn.it' password='faustoemagro'")
 connection.autocommit = True
@@ -61,10 +65,10 @@ people_insertion = []
 
 # Set per le chiavi e le altezze
 heights = set()
-keys_list = list(range(1000000))
+keys_list = list(range(TUPLES))
 random.shuffle(keys_list)
 
-for i in range(999999):
+for i in range(TUPLES - 1):
     key = keys_list[i]
 
     # Genero il nome completamente a caso
@@ -89,17 +93,17 @@ for i in range(999999):
             break
 
     people_insertion.append(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
-    print(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
+    # print(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
     # people_insertion.append(f"{i}\t{name}\t{address}\t{age}\t{i*0.001}")
 
 # Generazione della chiave per la tupla con altezza 185
-key185 = keys_list[999999]
+key185 = keys_list[TUPLES - 1]
 
 # Inserisco la tupla con valore 185 in altezza
 people_insertion.append(str(key185) + "\t"
-                        +  "".join(random.choices(string.ascii_lowercase, k=12)) + "\t"
-                        +  "".join(random.choices(string.ascii_lowercase, k=10)) + "\t"
-                        +  str(random.randrange(18, 100)) + "\t185")
+                        + ''.join(random.choices(string.ascii_lowercase, k=12)) + "\t"
+                        + ''.join(random.choices(string.ascii_lowercase, k=10)) + "\t"
+                        + str(random.randrange(18, 100)) + "\t185")
 
 data = StringIO()
 data.write("\n".join(people_insertion))
@@ -117,22 +121,17 @@ start = timer()
 
 car_insertion = []
 
-def targa(item, seq):
-    item *= 26
-    d0 = item // (26 ** 4)
-    d1 = (item % 26 ** 4) // 26 ** 3
-    d2 = (item % 26 ** 3) // 26 ** 2
-    d3 = (item % 26 ** 2) // 26
-    return chr(ord('A') + d0) + chr(ord('A') + d1) + str(seq).zfill(3) + chr(ord('A') + d2) + chr(ord('A') + d3)
 
-plates = list({targa(count // 26, count % 26) for count in range(1000000)})
+def targa(first, seq):
+    return "".join([chr(ord('A') + first // (26 ** 4)),chr(ord('A') + (first % 26 ** 4) // 26 ** 3),
+        str(seq).zfill(3), chr(ord('A') + (first % 26 ** 3) // 26 ** 2), chr(ord('A') + (first % 26 ** 2) // 26)])
+
+
+plates = list(set(targa(count, count % 26) for count in range(TUPLES)))
 
 random.shuffle(keys_list)
-random.shuffle(plates)
 
-assert(len(plates) == 1000000)
-
-for i in range(0, 1000000):
+for i in range(TUPLES):
     targa = plates[i]
 
     brand = "".join(
@@ -148,7 +147,7 @@ for i in range(0, 1000000):
 
     car_insertion.append(targa + "\t" + brand + "\t" + color + "\t" + str(fk))
     # car_insertion.append(f"{targa}\t{brand}\t{color}\t{i}")
-    print(f"{targa}\t{brand}\t{color}\t{fk}")
+    # print(f"{targa}\t{brand}\t{color}\t{fk}")
 
 data = StringIO()
 data.write("\n".join(car_insertion))
