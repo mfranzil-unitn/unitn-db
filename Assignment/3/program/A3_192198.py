@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-from __future__ import print_function
 
 import random
 import string
@@ -10,9 +8,9 @@ import time
 import psycopg2
 
 try:
-    from StringIO import StringIO  # Python 2.7
+    from StringIO import StringIO
 except ImportError:
-    from io import StringIO  # Python 3.6
+    from io import StringIO
 
 if sys.version_info >= (3, 7):
     def timer():
@@ -25,6 +23,7 @@ elif sys.version_info >= (3, 3):
 else:
     def timer():
         return time.clock() * (10 ** 9)
+
 
 TUPLES = 1000000
 
@@ -93,7 +92,7 @@ for i in range(TUPLES - 1):
             break
 
     people_insertion.append(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
-    # print(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
+    #print(str(key) + "\t" + name + "\t" + address + "\t" + str(age) + "\t" + str(height))
     # people_insertion.append(f"{i}\t{name}\t{address}\t{age}\t{i*0.001}")
 
 # Generazione della chiave per la tupla con altezza 185
@@ -122,14 +121,19 @@ start = timer()
 car_insertion = []
 
 
-def targa(first, seq):
-    return "".join([chr(ord('A') + first // (26 ** 4)),chr(ord('A') + (first % 26 ** 4) // 26 ** 3),
-        str(seq).zfill(3), chr(ord('A') + (first % 26 ** 3) // 26 ** 2), chr(ord('A') + (first % 26 ** 2) // 26)])
+def targa(item, seq):
+    item *= 26
+    d0 = item // (26 ** 4)
+    d1 = (item % 26 ** 4) // 26 ** 3
+    d2 = (item % 26 ** 3) // 26 ** 2
+    d3 = (item % 26 ** 2) // 26
+    return chr(ord('A') + d0) + chr(ord('A') + d1) + str(seq).zfill(3) + chr(ord('A') + d2) + chr(ord('A') + d3)
 
 
-plates = list(set(targa(count, count % 26) for count in range(TUPLES)))
+plates = list(set(targa(count // 26, count % 26) for count in range(TUPLES)))
 
 random.shuffle(keys_list)
+random.shuffle(plates)
 
 for i in range(TUPLES):
     targa = plates[i]
