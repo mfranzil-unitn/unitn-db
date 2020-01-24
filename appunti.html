@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Appunti di Database</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css"
+        integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+    <link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet"
+        type="text/css">
+    <style>
+        .task-list-item {
+            list-style-type: none;
+        }
+
+        .task-list-item-checkbox {
+            margin-left: -20px;
+            vertical-align: middle;
+        }
+    </style>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+</head>
+
+<body class="vscode-light">
+    <h1 id="appunti-di-database">Appunti di Database</h1>
+    <h2 id="informazioni-sul-database-locale">Informazioni sul database locale</h2>
+    <blockquote>
+        <p>Indirizzo: <code>localhost</code></p>
+        <p>Password: <code>1234</code></p>
+        <p>Porta: <code>5342</code></p>
+    </blockquote>
+    <h2 id="come-connettersi-al-server-unitn">Come connettersi al server UniTN</h2>
+    <pre><code class="language-shell"><div>"C:\Program Files\PostgreSQL\10\bin\psql.exe" -h sci-didattica.unitn.it -U db_016 -d db_016
+</div></code></pre>
+    <h2 id="translating-an-er">Translating an ER</h2>
+    <ul>
+        <li>
+            <p><strong>Many to Many</strong>:</p>
+            <pre><code class="language-SQL"><div><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> Relation (
+   <span class="hljs-keyword">attributes</span> ...,
+   ent1key <span class="hljs-built_in">SERIAL</span>,
+   ent2key <span class="hljs-built_in">SERIAL</span>,
+   PRIMARY <span class="hljs-keyword">KEY</span>(ent1key, ent2key)
+   <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span>(ent1key) <span class="hljs-keyword">REFERENCES</span> Ent1,
+   <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span>(ent2key) <span class="hljs-keyword">REFERENCES</span> Ent2
+)
+</div></code></pre>
+        </li>
+        <li>
+            <p><strong>Many to One (frecia sotile)</strong>:</p>
+            <pre><code class="language-SQL"><div><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> Relation (
+    <span class="hljs-keyword">attributes</span> ...,
+    manykey <span class="hljs-built_in">SERIAL</span>,
+    onekey <span class="hljs-built_in">SERIAL</span>,
+    PRIMARY <span class="hljs-keyword">KEY</span>(onekey)
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span>(manykey) <span class="hljs-keyword">REFERENCES</span> Many,
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span>(onekey) <span class="hljs-keyword">REFERENCES</span> One
+)
+</div></code></pre>
+        </li>
+        <li>
+            <p><strong>Many to One Total Participation (frecia grosa)</strong>:</p>
+            <pre><code class="language-SQL"><div><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> One_Relation (
+    attributes_one ...,
+    attributes_relation ...,
+    onekey <span class="hljs-built_in">SERIAL</span>,
+    manykey <span class="hljs-built_in">SERIAL</span> <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+    PRIMARY <span class="hljs-keyword">KEY</span>(onekey),
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span>(manykey) <span class="hljs-keyword">REFERENCES</span> Many
+      <span class="hljs-keyword">ON</span> <span class="hljs-keyword">DELETE</span> <span class="hljs-keyword">NO</span> <span class="hljs-keyword">ACTION</span>
+)
+</div></code></pre>
+        </li>
+        <li>
+            <p><strong>Weak Entities</strong>:</p>
+            <pre><code class="language-SQL"><div><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> Weak_Relation (
+   <span class="hljs-keyword">attributes</span> ...,
+   parentkey <span class="hljs-built_in">SERIAL</span> <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+   childkey <span class="hljs-built_in">SERIAL</span>,
+   PRIMARY <span class="hljs-keyword">KEY</span>(parentkey, childkey),
+   <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span>(parentkey) <span class="hljs-keyword">REFERENCES</span> <span class="hljs-keyword">Parent</span>
+     <span class="hljs-keyword">ON</span> <span class="hljs-keyword">DELETE</span> <span class="hljs-keyword">CASCADE</span>
+)
+</div></code></pre>
+        </li>
+        <li>
+            <p><strong>Is-A</strong>:</p>
+            <p>Two approaches: either create only the subclasses adding all the Parent class attributes into it, or
+                create both Parent and Child subclasses, recording shared info in the Parent class and extra info in the
+                Child classes with the ON DELETE CASCADE on.</p>
+            <pre><code class="language-SQL"><div><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-keyword">Parent</span> (
+    shared_attributes ...,
+    parentkey <span class="hljs-built_in">SERIAL</span>,
+    PRIMARY <span class="hljs-keyword">KEY</span>(parentkey)
+)
+
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-keyword">Child</span> (
+    specific_attributes ...,
+    parentkey <span class="hljs-built_in">SERIAL</span>,
+    PRIMARY <span class="hljs-keyword">KEY</span>(parentkey),
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span>(parentkey) <span class="hljs-keyword">REFERENCES</span> <span class="hljs-keyword">Parent</span>
+      <span class="hljs-keyword">ON</span> <span class="hljs-keyword">DELETE</span> <span class="hljs-keyword">CASCADE</span>
+)
+</div></code></pre>
+        </li>
+        <li>
+            <p><strong>Aggregation</strong>:</p>
+            <pre><code class="language-SQL"><div>    <span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> Aggregation_Relation (
+        attiributes <span class="hljs-built_in">SERIAL</span>,
+        first_key_in_aggregation <span class="hljs-built_in">SERIAL</span>, 
+        second_key_in_aggregation <span class="hljs-built_in">SERIAL</span>,
+        other_key <span class="hljs-built_in">SERIAL</span>,
+        PRIMARY <span class="hljs-keyword">KEY</span> (all_the_keys),
+        <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (first_key_in_aggregation) <span class="hljs-keyword">REFERENCES</span> (...),
+        <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (second_key_in_aggregation) <span class="hljs-keyword">REFERENCES</span> (...),
+        <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (other_key) <span class="hljs-keyword">REFERENCES</span> (...)
+    )
+</div></code></pre>
+        </li>
+    </ul>
+    <h2 id="relational-algebra">Relational Algebra</h2>
+    <p>Relation algebra is composed from <em>relational symbol</em>. They all take relations as input and return
+        relations as output. They can therefore be composed.</p>
+    <h3 id="project---pi">Project - <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>π</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">\pi</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault"
+                        style="margin-right:0.03588em;">π</span></span></span></span></h3>
+    <p>Deletes attributes that are NOT in the list:</p>
+    <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math>
+                        <semantics>
+                            <mrow>
+                                <msub>
+                                    <mi>π</mi>
+                                    <mrow>
+                                        <mi>a</mi>
+                                        <mi>t</mi>
+                                        <mi>t</mi>
+                                        <mi>r</mi>
+                                        <mi>i</mi>
+                                        <mi>b</mi>
+                                        <mi>u</mi>
+                                        <mi>t</mi>
+                                        <mi>e</mi>
+                                        <mi>s</mi>
+                                    </mrow>
+                                </msub>
+                                <mo stretchy="false">(</mo>
+                                <mi>R</mi>
+                                <mi>e</mi>
+                                <mi>l</mi>
+                                <mi>a</mi>
+                                <mi>t</mi>
+                                <mi>i</mi>
+                                <mi>o</mi>
+                                <mi>n</mi>
+                                <mo stretchy="false">)</mo>
+                            </mrow>
+                            <annotation encoding="application/x-tex">\pi_{attributes} (Relation)
+                            </annotation>
+                        </semantics>
+                    </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                            style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span
+                                class="mord mathdefault" style="margin-right:0.03588em;">π</span><span
+                                class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist"
+                                            style="height:0.33610799999999996em;"><span
+                                                style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span
+                                                    class="pstrut" style="height:2.7em;"></span><span
+                                                    class="sizing reset-size6 size3 mtight"><span
+                                                        class="mord mtight"><span
+                                                            class="mord mathdefault mtight">a</span><span
+                                                            class="mord mathdefault mtight">t</span><span
+                                                            class="mord mathdefault mtight">t</span><span
+                                                            class="mord mathdefault mtight"
+                                                            style="margin-right:0.02778em;">r</span><span
+                                                            class="mord mathdefault mtight">i</span><span
+                                                            class="mord mathdefault mtight">b</span><span
+                                                            class="mord mathdefault mtight">u</span><span
+                                                            class="mord mathdefault mtight">t</span><span
+                                                            class="mord mathdefault mtight">e</span><span
+                                                            class="mord mathdefault mtight">s</span></span></span></span></span><span
+                                            class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist"
+                                            style="height:0.15em;"><span></span></span></span></span></span></span><span
+                            class="mopen">(</span><span class="mord mathdefault"
+                            style="margin-right:0.00773em;">R</span><span class="mord mathdefault">e</span><span
+                            class="mord mathdefault" style="margin-right:0.01968em;">l</span><span
+                            class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span
+                            class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span
+                            class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></span>
+    </p>
+    <h3 id="select---sigma">Select - <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>σ</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">\sigma</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault"
+                        style="margin-right:0.03588em;">σ</span></span></span></span></h3>
+    <p>Selects rows that satisfy a condition (<span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mo>≥</mo>
+                            <mo separator="true">,</mo>
+                            <mo>≤</mo>
+                            <mo separator="true">,</mo>
+                            <mo>=</mo>
+                            <mo separator="true">,</mo>
+                            <mo>&gt;</mo>
+                            <mo separator="true">,</mo>
+                            <mo>&lt;</mo>
+                        </mrow>
+                        <annotation encoding="application/x-tex">\ge, \le, =, &gt;, &lt;</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span
+                        class="mrel">≥</span></span><span class="base"><span class="strut"
+                        style="height:0.8304100000000001em;vertical-align:-0.19444em;"></span><span
+                        class="mpunct">,</span><span class="mspace"
+                        style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span></span><span
+                    class="base"><span class="strut" style="height:0.56131em;vertical-align:-0.19444em;"></span><span
+                        class="mpunct">,</span><span class="mspace"
+                        style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span></span><span
+                    class="base"><span class="strut"
+                        style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span
+                        class="mpunct">,</span><span class="mspace"
+                        style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span></span><span
+                    class="base"><span class="strut"
+                        style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span
+                        class="mpunct">,</span><span class="mspace"
+                        style="margin-right:0.2777777777777778em;"></span><span
+                        class="mrel">&lt;</span></span></span></span>...or combination of these):</p>
+    <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math>
+                        <semantics>
+                            <mrow>
+                                <msub>
+                                    <mi>σ</mi>
+                                    <mrow>
+                                        <mi>c</mi>
+                                        <mi>o</mi>
+                                        <mi>n</mi>
+                                        <mi>d</mi>
+                                        <mi>i</mi>
+                                        <mi>t</mi>
+                                        <mi>i</mi>
+                                        <mi>o</mi>
+                                        <mi>n</mi>
+                                    </mrow>
+                                </msub>
+                                <mo stretchy="false">(</mo>
+                                <mi>R</mi>
+                                <mi>e</mi>
+                                <mi>l</mi>
+                                <mi>a</mi>
+                                <mi>t</mi>
+                                <mi>i</mi>
+                                <mi>o</mi>
+                                <mi>n</mi>
+                                <mo stretchy="false">)</mo>
+                            </mrow>
+                            <annotation encoding="application/x-tex">\sigma_{condition}(Relation)
+                            </annotation>
+                        </semantics>
+                    </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                            style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span
+                                class="mord mathdefault" style="margin-right:0.03588em;">σ</span><span
+                                class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist"
+                                            style="height:0.33610799999999996em;"><span
+                                                style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span
+                                                    class="pstrut" style="height:2.7em;"></span><span
+                                                    class="sizing reset-size6 size3 mtight"><span
+                                                        class="mord mtight"><span
+                                                            class="mord mathdefault mtight">c</span><span
+                                                            class="mord mathdefault mtight">o</span><span
+                                                            class="mord mathdefault mtight">n</span><span
+                                                            class="mord mathdefault mtight">d</span><span
+                                                            class="mord mathdefault mtight">i</span><span
+                                                            class="mord mathdefault mtight">t</span><span
+                                                            class="mord mathdefault mtight">i</span><span
+                                                            class="mord mathdefault mtight">o</span><span
+                                                            class="mord mathdefault mtight">n</span></span></span></span></span><span
+                                            class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist"
+                                            style="height:0.15em;"><span></span></span></span></span></span></span><span
+                            class="mopen">(</span><span class="mord mathdefault"
+                            style="margin-right:0.00773em;">R</span><span class="mord mathdefault">e</span><span
+                            class="mord mathdefault" style="margin-right:0.01968em;">l</span><span
+                            class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span
+                            class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span
+                            class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></span>
+    </p>
+    <h3 id="union-intersection-set-difference---cup-cap">Union, Intersection, Set-difference - <span class="katex"><span
+                class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mo>∪</mo>
+                            <mo separator="true">,</mo>
+                            <mo>∩</mo>
+                            <mo separator="true">,</mo>
+                            <mo>−</mo>
+                        </mrow>
+                        <annotation encoding="application/x-tex">\cup, \cap, -</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.7777700000000001em;vertical-align:-0.19444em;"></span><span
+                        class="mord">∪</span><span class="mpunct">,</span><span class="mspace"
+                        style="margin-right:0.16666666666666666em;"></span><span class="mord">∩</span><span
+                        class="mpunct">,</span><span class="mspace"
+                        style="margin-right:0.16666666666666666em;"></span><span
+                        class="mord">−</span></span></span></span></h3>
+    <p>These three operators yield the union, intersection and set-difference (<span class="katex"><span
+                class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>S</mi>
+                            <mn>1</mn>
+                            <mo>−</mo>
+                            <mi>S</mi>
+                            <mn>2</mn>
+                            <mo>:</mo>
+                            <mo>=</mo>
+                        </mrow>
+                        <annotation encoding="application/x-tex">S1 - S2 :=</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault"
+                        style="margin-right:0.05764em;">S</span><span class="mord">1</span><span class="mspace"
+                        style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span
+                        class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span
+                        class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault"
+                        style="margin-right:0.05764em;">S</span><span class="mord">2</span><span class="mspace"
+                        style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span
+                    class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span
+                        class="mrel">=</span></span></span></span> What is in S1, but not in S2). The two relations must
+        be <em>union-compatible</em>, meaning they have the same number of fields of the same type.</p>
+    <h3 id="cross-product---times">Cross-product - <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mo>×</mo>
+                        </mrow>
+                        <annotation encoding="application/x-tex">\times</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.66666em;vertical-align:-0.08333em;"></span><span
+                        class="mord">×</span></span></span></span></h3>
+    <p>Each row of a relation is paired with the relation of the other. Must be able to resolve conflicts of fields with
+        the same name.</p>
+    <h3 id="rename---rho">Rename - <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>ρ</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">\rho</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.625em;vertical-align:-0.19444em;"></span><span
+                        class="mord mathdefault">ρ</span></span></span></span></h3>
+    <p>Used in conjunction with another operator to rename fields.</p>
+    <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math>
+                        <semantics>
+                            <mrow>
+                                <mi>ρ</mi>
+                                <mo stretchy="false">(</mo>
+                                <mi>n</mi>
+                                <mi>a</mi>
+                                <mi>m</mi>
+                                <mi>e</mi>
+                                <mo separator="true">,</mo>
+                                <mi>r</mi>
+                                <mi>e</mi>
+                                <mi>l</mi>
+                                <mi>a</mi>
+                                <mi>t</mi>
+                                <mi>i</mi>
+                                <mi>o</mi>
+                                <mi>n</mi>
+                                <mo stretchy="false">)</mo>
+                            </mrow>
+                            <annotation encoding="application/x-tex">\rho(name, relation)
+                            </annotation>
+                        </semantics>
+                    </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                            style="height:1em;vertical-align:-0.25em;"></span><span
+                            class="mord mathdefault">ρ</span><span class="mopen">(</span><span
+                            class="mord mathdefault">n</span><span class="mord mathdefault">a</span><span
+                            class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span
+                            class="mpunct">,</span><span class="mspace"
+                            style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault"
+                            style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span
+                            class="mord mathdefault" style="margin-right:0.01968em;">l</span><span
+                            class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span
+                            class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span
+                            class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></span>
+    </p>
+    <h3 id="join---bowtie">Join - <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mo>⋈</mo>
+                        </mrow>
+                        <annotation encoding="application/x-tex">\bowtie</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.51em;vertical-align:-0.005em;"></span><span
+                        class="mrel">⋈</span></span></span></span></h3>
+    <p>Similar to cross-product, but uses a condition to choose rows from both relations. Can be distinguished in
+        <em>condition or theta join</em> where a condition is provided, <em>equi-join</em> where the condition to be
+        satisfied is an equality, and <em>natural-join</em> which executes equi-join in all attributes.</p>
+    <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math>
+                        <semantics>
+                            <mrow>
+                                <mi>S</mi>
+                                <mn>1</mn>
+                                <msub>
+                                    <mo>⋈</mo>
+                                    <mrow>
+                                        <mi>S</mi>
+                                        <mn>1.</mn>
+                                        <mi>s</mi>
+                                        <mi>i</mi>
+                                        <mi>d</mi>
+                                        <mo>&lt;</mo>
+                                        <mi>R</mi>
+                                        <mn>1.</mn>
+                                        <mi>s</mi>
+                                        <mi>i</mi>
+                                        <mi>d</mi>
+                                    </mrow>
+                                </msub>
+                                <mi>R</mi>
+                                <mn>1</mn>
+                            </mrow>
+                            <annotation encoding="application/x-tex">S1 \bowtie_{S1.sid &lt; R1.sid} R1
+                            </annotation>
+                        </semantics>
+                    </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                            style="height:0.8607em;vertical-align:-0.17737em;"></span><span class="mord mathdefault"
+                            style="margin-right:0.05764em;">S</span><span class="mord">1</span><span class="mspace"
+                            style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span
+                                class="mrel">⋈</span><span class="msupsub"><span class="vlist-t vlist-t2"><span
+                                        class="vlist-r"><span class="vlist" style="height:0.33610799999999985em;"><span
+                                                style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span
+                                                    class="pstrut" style="height:2.7em;"></span><span
+                                                    class="sizing reset-size6 size3 mtight"><span
+                                                        class="mord mtight"><span class="mord mathdefault mtight"
+                                                            style="margin-right:0.05764em;">S</span><span
+                                                            class="mord mtight">1</span><span
+                                                            class="mord mtight">.</span><span
+                                                            class="mord mathdefault mtight">s</span><span
+                                                            class="mord mathdefault mtight">i</span><span
+                                                            class="mord mathdefault mtight">d</span><span
+                                                            class="mrel mtight">&lt;</span><span
+                                                            class="mord mathdefault mtight"
+                                                            style="margin-right:0.00773em;">R</span><span
+                                                            class="mord mtight">1</span><span
+                                                            class="mord mtight">.</span><span
+                                                            class="mord mathdefault mtight">s</span><span
+                                                            class="mord mathdefault mtight">i</span><span
+                                                            class="mord mathdefault mtight">d</span></span></span></span></span><span
+                                            class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist"
+                                            style="height:0.17737em;"><span></span></span></span></span></span></span><span
+                            class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span
+                        class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span
+                            class="mord mathdefault" style="margin-right:0.00773em;">R</span><span
+                            class="mord">1</span></span></span></span></span></p>
+    <h3 id="division">Division - <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi mathvariant="normal">/</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">/</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:1em;vertical-align:-0.25em;"></span><span
+                        class="mord">/</span></span></span></span></h3>
+    <p>Not supported in SQL. Given two fields <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>x</mi>
+                            <mo separator="true">,</mo>
+                            <mi>y</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">x, y</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.625em;vertical-align:-0.19444em;"></span><span
+                        class="mord mathdefault">x</span><span class="mpunct">,</span><span class="mspace"
+                        style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault"
+                        style="margin-right:0.03588em;">y</span></span></span></span>, both contained in A and <span
+            class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>y</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">y</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault"
+                        style="margin-right:0.03588em;">y</span></span></span></span> only contained in B, the division
+        shall return all the <span class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>x</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">x</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.43056em;vertical-align:0em;"></span><span
+                        class="mord mathdefault">x</span></span></span></span> tuples that don't match each <span
+            class="katex"><span class="katex-mathml"><math>
+                    <semantics>
+                        <mrow>
+                            <mi>y</mi>
+                        </mrow>
+                        <annotation encoding="application/x-tex">y</annotation>
+                    </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                        style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault"
+                        style="margin-right:0.03588em;">y</span></span></span></span> coming from B in A.</p>
+    <h2 id="queries---important-keywords">Queries - Important keywords</h2>
+    <pre><code class="language-SQL"><div><span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">DISTINCT</span> <span class="hljs-comment">-- DISTINCT removes duplicates before output</span>
+
+<span class="hljs-string">'B_%B'</span> <span class="hljs-comment">-- pattern matching: % means 0+ chars, _ means 1+ chars</span>
+
+<span class="hljs-comment">---takes two union compatible sets and merges them</span>
+<span class="hljs-comment">-- with the correct operation</span>
+<span class="hljs-keyword">UNION</span>        <span class="hljs-comment">-- relative to the OR</span>
+<span class="hljs-keyword">INTERSECT</span>    <span class="hljs-comment">-- relative to the AND</span>
+<span class="hljs-keyword">DIFFERENCE</span>
+
+... <span class="hljs-keyword">WHERE</span> <span class="hljs-string">'parameter'</span> <span class="hljs-keyword">IN</span> (<span class="hljs-string">'NESTED_QUERY'</span>)
+... <span class="hljs-keyword">WHERE</span> <span class="hljs-string">'parameter'</span> <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">IN</span> (<span class="hljs-string">'NESTED_QUERY'</span>) <span class="hljs-comment">-- Computes NESTED_QUERY first and then checks the condition. Returns true if and only if parameter is found in the table of the nested query.</span>
+
+<span class="hljs-comment">-- The condition with in can be merged in the WHERE of the nested_query</span>
+<span class="hljs-comment">-- (but also using SELECT * to make the attribute available); the query will output the same results</span>
+... <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">EXISTS</span> (<span class="hljs-string">'NESTED_QUERY'</span>) <span class="hljs-comment">-- returns true if at least one record is found</span>
+
+... <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">UNIQUE</span> (<span class="hljs-string">'NESTED_QUERY'</span>) <span class="hljs-comment">-- returns True only if all the returned rows are not identical</span>
+
+... <span class="hljs-keyword">WHERE</span> <span class="hljs-string">'condition'</span> &gt; <span class="hljs-keyword">ANY</span> (<span class="hljs-string">'N_S'</span>) <span class="hljs-comment">-- where op is &gt;=, &gt;, =, &lt;, &lt;=; same as above; checks if condition is higher than ANY of the values found in the subquery; uses lazy evaluation</span>
+... <span class="hljs-keyword">WHERE</span> <span class="hljs-string">'condition'</span> &gt; <span class="hljs-keyword">ALL</span> (<span class="hljs-string">'N_S'</span>)
+
+<span class="hljs-comment">-- aggregate operators: used in SELECT</span>
+
+<span class="hljs-keyword">COUNT</span> (*)  <span class="hljs-comment">-- returns the number of rows (counts duplicates!)</span>
+<span class="hljs-keyword">COUNT</span> ( [<span class="hljs-keyword">DISTINCT</span>] A) <span class="hljs-comment">-- returns the number of distinct rows</span>
+<span class="hljs-keyword">SUM</span> ( [<span class="hljs-keyword">DISTINCT</span>] A)  <span class="hljs-comment">-- sums all the values</span>
+<span class="hljs-keyword">AVG</span> ( [<span class="hljs-keyword">DISTINCT</span>] A)
+<span class="hljs-keyword">MAX</span> (A) <span class="hljs-comment">-- returns the HIGHEST</span>
+<span class="hljs-keyword">MIN</span> (A)  
+
+<span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'grouping_parameter'</span>
+<span class="hljs-keyword">HAVING</span> <span class="hljs-string">'group_qualification'</span> <span class="hljs-comment">-- used to group output rows and then compute an additional qualification. HAVING must be a condition</span>
+
+<span class="hljs-keyword">FROM</span> <span class="hljs-string">'table'</span> <span class="hljs-keyword">JOIN</span> <span class="hljs-string">'table2'</span> <span class="hljs-keyword">ON</span> <span class="hljs-string">'attribute1 = attribute2'</span> <span class="hljs-comment">-- Normal join</span>
+
+<span class="hljs-keyword">FROM</span> <span class="hljs-string">'table'</span> <span class="hljs-keyword">NATURAL</span> <span class="hljs-keyword">JOIN</span> <span class="hljs-string">'table2'</span> <span class="hljs-comment">-- niente constraint! Unisce tutti i campi in comune! Quando</span>
+
+<span class="hljs-comment">-- aggiungere eventuali left / right join</span>
+
+</div></code></pre>
+    <h2 id="tipi-di-dato">Tipi di dato</h2>
+    <pre><code class="language-SQL"><div>BOOLEAN
+
+CHAR(N) <span class="hljs-comment">-- with space padding</span>
+VARCHAR(N)  <span class="hljs-comment">-- without space padding</span>
+TEXT <span class="hljs-comment">-- unlimited</span>
+
+SMALLINT
+INT
+SERIAL <span class="hljs-comment">--auto</span>
+
+TIME, DATE, TIMESTAMP, TIMESTAMPTZ, INTERVAL
+
+UUID, JSON,  <span class="hljs-comment">--etc...</span>
+</div></code></pre>
+    <h3 id="comandi">Comandi</h3>
+    <pre><code class="language-SQL"><div><span class="hljs-comment">-- Table creation:</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> Esempio (
+    var1 id1,
+    var2 id2,
+    PRIMARY <span class="hljs-keyword">KEY</span> (var1),  <span class="hljs-comment">-- Primary key definition</span>
+    <span class="hljs-keyword">FOREIGN</span> <span class="hljs-keyword">KEY</span> (var2) <span class="hljs-keyword">REFERENCES</span> Esempio2,  <span class="hljs-comment">-- Foreign key definition</span>
+)
+
+<span class="hljs-comment">-- Constraints:</span>
+<span class="hljs-keyword">CHECK</span> <span class="hljs-comment">-- (condition)</span>
+<span class="hljs-keyword">UNIQUE</span>
+<span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>
+
+<span class="hljs-keyword">ON</span> <span class="hljs-keyword">DELETE</span>
+    <span class="hljs-keyword">NO</span> <span class="hljs-keyword">ACTION</span>
+    <span class="hljs-keyword">CASCADE</span>  <span class="hljs-comment">-- remove all tuples refering to this</span>
+    <span class="hljs-keyword">SET</span> <span class="hljs-literal">NULL</span> <span class="hljs-comment">-- set to null</span>
+    <span class="hljs-keyword">SET</span> <span class="hljs-keyword">DEFAULT</span>
+
+<span class="hljs-comment">-- Alteration:</span>
+<span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">TABLE</span>
+    <span class="hljs-keyword">ADD</span> <span class="hljs-keyword">COLUMN</span>
+    <span class="hljs-keyword">DROP</span> <span class="hljs-keyword">COLUMN</span>
+    <span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">COLUMN</span> <span class="hljs-comment">-- [name] ( SET / DROP NOT NULL ) (...)</span>
+
+<span class="hljs-comment">-- Views:</span>
+
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">VIEW</span> <span class="hljs-string">'VIEW_NAME'</span> <span class="hljs-keyword">AS</span> (<span class="hljs-string">'SQL_QUERY'</span>)
+
+<span class="hljs-comment">-- Deletion:</span>
+<span class="hljs-keyword">DROP</span> <span class="hljs-keyword">VIEW</span>
+<span class="hljs-keyword">DROP</span> <span class="hljs-keyword">TABLE</span>
+<span class="hljs-keyword">DROP</span> <span class="hljs-keyword">DATABASE</span>
+
+<span class="hljs-keyword">TRUNCATE</span> <span class="hljs-keyword">TABLE</span> (<span class="hljs-keyword">CASCADE</span>)
+
+<span class="hljs-keyword">DELETE</span> <span class="hljs-keyword">FROM</span> Esempio3
+<span class="hljs-keyword">WHERE</span> condition
+
+<span class="hljs-comment">-- Get all tables</span>
+<span class="hljs-keyword">SELECT</span> table_name <span class="hljs-keyword">FROM</span> information_schema.tables <span class="hljs-keyword">WHERE</span> table_schema=<span class="hljs-string">'public'</span>
+</div></code></pre>
+
+</body>
+
+</html>
