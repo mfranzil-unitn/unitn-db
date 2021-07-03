@@ -20,9 +20,15 @@ This repo contains material about the following course:
 
 You can find the following material in the repo:
 
+<<<<<<< HEAD
 * `lectures/` - Code used in class.
 * `assignment/` - Assignment given by the teacher, with solutions.
 * `query-cost/` - LaTeX paper written by the professor on the subject of query costs.
+=======
+* `Codici/` - Code used in class.
+* `Assignment/` - Assignment given by the teacher, with solutions.
+* `TeoriaCosti` - LaTeX paper written by the professor on the subject of query costs.
+>>>>>>> ce37ac04002997607a79300528bd072da85127db
 * `appunti.md` - Notes taken during class, written in GitHub-Flavored Markdown with LaTeX support.
 * `appunti.html` - Not-so-often updated HTML version of said notes.
 * `markdown.css` - File used to style the `appunti.md` file.
