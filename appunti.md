@@ -17,6 +17,7 @@
 ## Translating an ER
 
 - **Many to Many**:
+
      ```SQL
     CREATE TABLE Relation (
         attributes ...,
@@ -27,7 +28,9 @@
         FOREIGN KEY(ent2key) REFERENCES Ent2
     )
     ```
+
 - **Many to One (frecia sotile)**:
+
     ```SQL
     CREATE TABLE Relation (
         attributes ...,
@@ -38,7 +41,9 @@
         FOREIGN KEY(onekey) REFERENCES One
     )
     ```
+
 - **Many to One Total Participation (frecia grosa)**:
+
     ```SQL
     CREATE TABLE One_Relation (
         attributes_one ...,
@@ -50,7 +55,9 @@
           ON DELETE NO ACTION
     )
     ```
+
 - **Weak Entities**:
+
      ```SQL
     CREATE TABLE Weak_Relation (
         attributes ...,
@@ -61,6 +68,7 @@
           ON DELETE CASCADE
     )
     ```
+
 - **Is-A**:
   
     Two approaches:  either create only the subclasses adding all the Parent class attributes into it, or create both Parent and Child subclasses, recording shared info in the Parent class and extra info in the Child classes with the ON DELETE CASCADE on.
@@ -80,6 +88,7 @@
           ON DELETE CASCADE
     )
     ```
+
 - **Aggregation**:
   
     ```SQL
